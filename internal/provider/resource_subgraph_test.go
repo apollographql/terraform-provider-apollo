@@ -29,7 +29,7 @@ func TestAccSubgraphResourceDeferredCreate(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:      testAccSubgraphResourceConfig(server.URL()),
 				ExpectError: regexp.MustCompile(`Create subgraph: capability deferred`),
 			},
 		},
@@ -53,14 +53,14 @@ func TestAccSubgraphResourceImportReadDelete(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:             testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:       "apollo_subgraph.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current:products",
 				ImportStatePersist: true,
 			},
 			{
-				Config: testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config: testAccSubgraphResourceConfig(server.URL()),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_subgraph.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_subgraph.test", "variant", "current"),
@@ -95,7 +95,7 @@ func TestAccSubgraphResourceRefreshMissingSubgraph(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:             testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:       "apollo_subgraph.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current:products",
@@ -128,7 +128,7 @@ func TestAccSubgraphResourceReadUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:        testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:  "apollo_subgraph.test",
 				ImportState:   true,
 				ImportStateId: "inventory:current:products",
@@ -156,7 +156,7 @@ func TestAccSubgraphResourceReadPermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:        testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:  "apollo_subgraph.test",
 				ImportState:   true,
 				ImportStateId: "inventory:current:products",
@@ -183,14 +183,14 @@ func TestAccSubgraphResourceDeleteMissingSubgraph(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:             testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:       "apollo_subgraph.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current:products",
 				ImportStatePersist: true,
 			},
 			{
-				Config:    testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:    testAccSubgraphResourceConfig(server.URL()),
 				PreConfig: func() { server.DeleteSubgraph("inventory", "current", "products") },
 				Destroy:   true,
 			},
@@ -215,14 +215,14 @@ func TestAccSubgraphResourceDeleteUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:             testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:       "apollo_subgraph.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current:products",
 				ImportStatePersist: true,
 			},
 			{
-				Config:      testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:      testAccSubgraphResourceConfig(server.URL()),
 				PreConfig:   func() { server.SetMode(operationRemoveSubgraph, testServerModeUnauthenticated) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`Delete subgraph: authentication failed`),
@@ -248,14 +248,14 @@ func TestAccSubgraphResourceDeletePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:             testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:       "apollo_subgraph.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current:products",
 				ImportStatePersist: true,
 			},
 			{
-				Config:      testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:      testAccSubgraphResourceConfig(server.URL()),
 				PreConfig:   func() { server.SetMode(operationRemoveSubgraph, testServerModePermissionDenied) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`(?s)Delete subgraph: permission denied.*Graph admin or broader org access.*subgraph removal`),
@@ -281,14 +281,14 @@ func TestAccSubgraphResourceDeleteCompositionFailure(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:             testAccSubgraphResourceConfig(server.URL()),
 				ResourceName:       "apollo_subgraph.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current:products",
 				ImportStatePersist: true,
 			},
 			{
-				Config:      testAccSubgraphResourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:      testAccSubgraphResourceConfig(server.URL()),
 				PreConfig:   func() { server.SetMode(operationRemoveSubgraph, testServerModeCompositionFailure) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`(?s)Delete subgraph.*produced composition.*errors`),
@@ -363,7 +363,7 @@ func TestSubgraphImportID(t *testing.T) {
 	}
 }
 
-func testAccSubgraphResourceConfig(endpoint string, graphID string, variant string, name string) string {
+func testAccSubgraphResourceConfig(endpoint string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -371,11 +371,11 @@ provider "apollo" {
 }
 
 resource "apollo_subgraph" "test" {
-  graph_id = %q
-  variant  = %q
-  name     = %q
+  graph_id = "inventory"
+  variant  = "current"
+  name     = "products"
 }
-`, endpoint, graphID, variant, name)
+`, endpoint)
 }
 
 type subgraphRecord struct {

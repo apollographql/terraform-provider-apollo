@@ -26,7 +26,7 @@ func TestAccGraphAPIKeyResourceBasic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "name", "inventory-ci"),
@@ -38,7 +38,7 @@ func TestAccGraphAPIKeyResourceBasic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-deploy", "GRAPH_ADMIN"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-deploy", "GRAPH_ADMIN"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "name", "inventory-deploy"),
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "role", "GRAPH_ADMIN"),
@@ -73,14 +73,14 @@ func TestAccGraphAPIKeyResourceImport(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config:             testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 				ResourceName:       "apollo_graph_api_key.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:graph-key-existing",
 				ImportStatePersist: true,
 			},
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "name", "inventory-ci"),
@@ -107,14 +107,14 @@ func TestAccGraphAPIKeyResourceRoleReplacement(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "id", "graph-key-1"),
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "key", "service:graph-token-1"),
 				),
 			},
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "CONTRIBUTOR"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "CONTRIBUTOR"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "role", "CONTRIBUTOR"),
 					resource.TestCheckResourceAttr("apollo_graph_api_key.test", "id", "graph-key-2"),
@@ -135,7 +135,7 @@ func TestAccGraphAPIKeyResourceRefreshMissingRemote(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 			},
 			{
 				PreConfig:          func() { server.DeleteGraphAPIKeyRecord("inventory", "graph-key-1") },
@@ -166,7 +166,7 @@ func TestAccGraphAPIKeyResourceReadPermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config:        testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 				ResourceName:  "apollo_graph_api_key.test",
 				ImportState:   true,
 				ImportStateId: "inventory:graph-key-existing",
@@ -186,10 +186,10 @@ func TestAccGraphAPIKeyResourceDeleteUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config: testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 			},
 			{
-				Config:      testAccGraphAPIKeyResourceConfig(server.URL(), "inventory", "inventory-ci", "GRAPH_ADMIN"),
+				Config:      testAccGraphAPIKeyResourceConfig(server.URL(), "inventory-ci", "GRAPH_ADMIN"),
 				PreConfig:   func() { server.SetMode(operationDeleteGraphAPIKey, testServerModeUnauthenticated) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`Delete graph API key: authentication failed`),
@@ -208,7 +208,7 @@ func TestAccSubgraphAPIKeyResourceBasic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_subgraph_api_key.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_subgraph_api_key.test", "variant", "production"),
@@ -221,7 +221,7 @@ func TestAccSubgraphAPIKeyResourceBasic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-runtime"),
+				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-runtime"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_subgraph_api_key.test", "name", "products-runtime"),
 					resource.TestCheckResourceAttr("apollo_subgraph_api_key.test", "id", "subgraph-key-1"),
@@ -256,14 +256,14 @@ func TestAccSubgraphAPIKeyResourceImport(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config:             testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 				ResourceName:       "apollo_subgraph_api_key.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:production:products:subgraph-key-existing",
 				ImportStatePersist: true,
 			},
 			{
-				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_subgraph_api_key.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_subgraph_api_key.test", "variant", "production"),
@@ -291,7 +291,7 @@ func TestAccSubgraphAPIKeyResourceRefreshMissingRemote(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 			},
 			{
 				PreConfig:          func() { server.DeleteSubgraphAPIKeyRecord("subgraph-key-1") },
@@ -323,7 +323,7 @@ func TestAccSubgraphAPIKeyResourceReadUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config:        testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 				ResourceName:  "apollo_subgraph_api_key.test",
 				ImportState:   true,
 				ImportStateId: "inventory:production:products:subgraph-key-existing",
@@ -343,10 +343,10 @@ func TestAccSubgraphAPIKeyResourceDeletePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config: testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 			},
 			{
-				Config:      testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config:      testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 				PreConfig:   func() { server.SetMode(operationDeleteSubgraphAPIKey, testServerModePermissionDenied) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`(?s)Delete subgraph API key: permission denied.*Org Admin or Graph Admin access.*subgraph API key management`),
@@ -375,7 +375,7 @@ func TestAccSubgraphAPIKeyResourceRejectsMultiTargetRemoteKey(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccSubgraphAPIKeyResourceConfig(server.URL(), "inventory", "production", "products", "products-router"),
+				Config:        testAccSubgraphAPIKeyResourceConfig(server.URL(), "products-router"),
 				ResourceName:  "apollo_subgraph_api_key.test",
 				ImportState:   true,
 				ImportStateId: "inventory:production:products:subgraph-key-multi",
@@ -385,7 +385,7 @@ func TestAccSubgraphAPIKeyResourceRejectsMultiTargetRemoteKey(t *testing.T) {
 	})
 }
 
-func testAccGraphAPIKeyResourceConfig(endpoint string, graphID string, name string, role string) string {
+func testAccGraphAPIKeyResourceConfig(endpoint string, name string, role string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -393,14 +393,14 @@ provider "apollo" {
 }
 
 resource "apollo_graph_api_key" "test" {
-  graph_id = %q
+  graph_id = "inventory"
   name     = %q
   role     = %q
 }
-`, endpoint, graphID, name, role)
+`, endpoint, name, role)
 }
 
-func testAccSubgraphAPIKeyResourceConfig(endpoint string, graphID string, variant string, subgraphName string, name string) string {
+func testAccSubgraphAPIKeyResourceConfig(endpoint string, name string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -408,12 +408,12 @@ provider "apollo" {
 }
 
 resource "apollo_subgraph_api_key" "test" {
-  graph_id      = %q
-  variant       = %q
-  subgraph_name = %q
+  graph_id      = "inventory"
+  variant       = "production"
+  subgraph_name = "products"
   name          = %q
 }
-`, endpoint, graphID, variant, subgraphName, name)
+`, endpoint, name)
 }
 
 func testCheckNullOrMissingResourceAttr(resourceName string, attribute string) resource.TestCheckFunc {

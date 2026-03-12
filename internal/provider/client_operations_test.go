@@ -39,7 +39,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				graph := value.(*GraphMetadata)
+				graph := requireValueType[*GraphMetadata](t, value)
 				if got, want := graph.ID, "inventory"; got != want {
 					t.Fatalf("unexpected graph id: got %q want %q", got, want)
 				}
@@ -64,7 +64,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				variant := value.(*VariantMetadata)
+				variant := requireValueType[*VariantMetadata](t, value)
 				if got, want := variant.ID, "variant-current"; got != want {
 					t.Fatalf("unexpected variant id: got %q want %q", got, want)
 				}
@@ -99,7 +99,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				subgraph := value.(*SubgraphMetadata)
+				subgraph := requireValueType[*SubgraphMetadata](t, value)
 				if got, want := subgraph.Name, "products"; got != want {
 					t.Fatalf("unexpected subgraph name: got %q want %q", got, want)
 				}
@@ -148,7 +148,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				pql := value.(*PersistedQueryList)
+				pql := requireValueType[*PersistedQueryList](t, value)
 				if got, want := pql.Name, "mobile-clients"; got != want {
 					t.Fatalf("unexpected pql name: got %q want %q", got, want)
 				}
@@ -164,7 +164,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				pql := value.(*PersistedQueryList)
+				pql := requireValueType[*PersistedQueryList](t, value)
 				if got, want := pql.ID, "pql-123"; got != want {
 					t.Fatalf("unexpected pql id: got %q want %q", got, want)
 				}
@@ -187,7 +187,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				pql := value.(*PersistedQueryList)
+				pql := requireValueType[*PersistedQueryList](t, value)
 				if got, want := pql.ID, "pql-123"; got != want {
 					t.Fatalf("unexpected pql id: got %q want %q", got, want)
 				}
@@ -208,7 +208,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				pql := value.(*PersistedQueryList)
+				pql := requireValueType[*PersistedQueryList](t, value)
 				if got, want := pql.Name, "mobile-clients"; got != want {
 					t.Fatalf("unexpected pql name: got %q want %q", got, want)
 				}
@@ -240,7 +240,7 @@ func TestClientDomainMethods(t *testing.T) {
 			},
 			assert: func(t *testing.T, value any) {
 				t.Helper()
-				pql := value.(*PersistedQueryList)
+				pql := requireValueType[*PersistedQueryList](t, value)
 				if got, want := pql.ID, "pql-123"; got != want {
 					t.Fatalf("unexpected pql id: got %q want %q", got, want)
 				}
@@ -265,7 +265,6 @@ func TestClientDomainMethods(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -318,6 +317,17 @@ func TestClientDomainMethods(t *testing.T) {
 			testCase.assert(t, value)
 		})
 	}
+}
+
+func requireValueType[T any](t *testing.T, value any) T {
+	t.Helper()
+
+	typedValue, ok := value.(T)
+	if !ok {
+		t.Fatalf("unexpected value type: got %T", value)
+	}
+
+	return typedValue
 }
 
 func TestClientListPersistedQueryListsDeferred(t *testing.T) {

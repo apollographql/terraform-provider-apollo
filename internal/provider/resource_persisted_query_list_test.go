@@ -27,7 +27,7 @@ func TestAccPersistedQueryListResourceBasic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPersistedQueryListResourceConfig(server.URL(), "inventory", "mobile-clients", "Mobile clients"),
+				Config: testAccPersistedQueryListResourceConfig(server.URL(), "Mobile clients"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_persisted_query_list.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_persisted_query_list.test", "name", "mobile-clients"),
@@ -36,7 +36,7 @@ func TestAccPersistedQueryListResourceBasic(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccPersistedQueryListResourceConfig(server.URL(), "inventory", "mobile-clients", "Updated description"),
+				Config: testAccPersistedQueryListResourceConfig(server.URL(), "Updated description"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_persisted_query_list.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_persisted_query_list.test", "name", "mobile-clients"),
@@ -76,7 +76,7 @@ func TestAccPersistedQueryListResourceUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccPersistedQueryListResourceConfig(server.URL(), "inventory", "mobile-clients", "Mobile clients"),
+				Config:      testAccPersistedQueryListResourceConfig(server.URL(), "Mobile clients"),
 				ExpectError: regexp.MustCompile(`Create persisted query list: authentication failed`),
 			},
 		},
@@ -94,7 +94,7 @@ func TestAccPersistedQueryListResourcePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccPersistedQueryListResourceConfig(server.URL(), "inventory", "mobile-clients", "Mobile clients"),
+				Config:      testAccPersistedQueryListResourceConfig(server.URL(), "Mobile clients"),
 				ExpectError: regexp.MustCompile(`Create persisted query list: permission denied`),
 			},
 		},
@@ -184,7 +184,7 @@ func TestPersistedQueryListHasVariantLink(t *testing.T) {
 	}
 }
 
-func testAccPersistedQueryListResourceConfig(endpoint string, graphID string, name string, description string) string {
+func testAccPersistedQueryListResourceConfig(endpoint string, description string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key   = "service:key"
@@ -192,11 +192,11 @@ provider "apollo" {
 }
 
 resource "apollo_persisted_query_list" "test" {
-  graph_id    = %q
-  name        = %q
+  graph_id    = "inventory"
+  name        = "mobile-clients"
   description = %q
 }
-`, endpoint, graphID, name, description)
+`, endpoint, description)
 }
 
 func testAccPersistedQueryListLinkResourceConfig(endpoint string, variant string) string {

@@ -27,7 +27,7 @@ func TestAccGraphVariantResourceDeferredCreate(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccGraphVariantResourceConfig(server.URL(), "inventory", "production"),
+				Config:      testAccGraphVariantResourceConfig(server.URL(), "production"),
 				ExpectError: regexp.MustCompile(`Create graph variant: capability deferred`),
 			},
 		},
@@ -45,14 +45,14 @@ func TestAccGraphVariantResourceImportReadDelete(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:             testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:       "apollo_graph_variant.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current",
 				ImportStatePersist: true,
 			},
 			{
-				Config: testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config: testAccGraphVariantResourceConfig(server.URL(), "current"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("apollo_graph_variant.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("apollo_graph_variant.test", "variant", "current"),
@@ -78,7 +78,7 @@ func TestAccGraphVariantResourceRefreshMissingVariant(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:             testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:       "apollo_graph_variant.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current",
@@ -105,7 +105,7 @@ func TestAccGraphVariantResourceReadUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:        testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:  "apollo_graph_variant.test",
 				ImportState:   true,
 				ImportStateId: "inventory:current",
@@ -127,7 +127,7 @@ func TestAccGraphVariantResourceReadPermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:        testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:        testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:  "apollo_graph_variant.test",
 				ImportState:   true,
 				ImportStateId: "inventory:current",
@@ -148,14 +148,14 @@ func TestAccGraphVariantResourceDeleteMissingVariant(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:             testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:       "apollo_graph_variant.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current",
 				ImportStatePersist: true,
 			},
 			{
-				Config:    testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:    testAccGraphVariantResourceConfig(server.URL(), "current"),
 				PreConfig: func() { server.DeleteVariant("inventory", "current") },
 				Destroy:   true,
 			},
@@ -174,14 +174,14 @@ func TestAccGraphVariantResourceDeleteUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:             testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:       "apollo_graph_variant.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current",
 				ImportStatePersist: true,
 			},
 			{
-				Config:      testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:      testAccGraphVariantResourceConfig(server.URL(), "current"),
 				PreConfig:   func() { server.SetMode(operationDeleteGraphVariant, testServerModeUnauthenticated) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`Delete graph variant: authentication failed`),
@@ -201,14 +201,14 @@ func TestAccGraphVariantResourceDeletePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:             testAccGraphVariantResourceConfig(server.URL(), "current"),
 				ResourceName:       "apollo_graph_variant.test",
 				ImportState:        true,
 				ImportStateId:      "inventory:current",
 				ImportStatePersist: true,
 			},
 			{
-				Config:      testAccGraphVariantResourceConfig(server.URL(), "inventory", "current"),
+				Config:      testAccGraphVariantResourceConfig(server.URL(), "current"),
 				PreConfig:   func() { server.SetMode(operationDeleteGraphVariant, testServerModePermissionDenied) },
 				Destroy:     true,
 				ExpectError: regexp.MustCompile(`(?s)Delete graph variant: permission denied.*Graph admin or broader org access.*variant deletion`),
@@ -252,7 +252,7 @@ func TestGraphVariantResourceUpdateProviderBug(t *testing.T) {
 	}
 }
 
-func testAccGraphVariantResourceConfig(endpoint string, graphID string, variant string) string {
+func testAccGraphVariantResourceConfig(endpoint string, variant string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -260,10 +260,10 @@ provider "apollo" {
 }
 
 resource "apollo_graph_variant" "test" {
-  graph_id = %q
+  graph_id = "inventory"
   variant  = %q
 }
-`, endpoint, graphID, variant)
+`, endpoint, variant)
 }
 
 type graphVariantRecord struct {

@@ -103,7 +103,7 @@ func TestAccGraphVariantDataSourceBasic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccGraphVariantDataSourceConfig(server.URL(), "inventory", "current"),
+				Config: testAccGraphVariantDataSourceConfig(server.URL(), "current"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.apollo_graph_variant.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("data.apollo_graph_variant.test", "variant", "current"),
@@ -128,7 +128,7 @@ func TestAccGraphVariantDataSourceNotFound(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccGraphVariantDataSourceConfig(server.URL(), "inventory", "missing"),
+				Config:      testAccGraphVariantDataSourceConfig(server.URL(), "missing"),
 				ExpectError: regexp.MustCompile(`Read graph variant: remote object not found`),
 			},
 		},
@@ -146,7 +146,7 @@ func TestAccGraphVariantDataSourceUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccGraphVariantDataSourceConfig(server.URL(), "inventory", "current"),
+				Config:      testAccGraphVariantDataSourceConfig(server.URL(), "current"),
 				ExpectError: regexp.MustCompile(`Read graph variant: authentication failed`),
 			},
 		},
@@ -164,7 +164,7 @@ func TestAccGraphVariantDataSourcePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccGraphVariantDataSourceConfig(server.URL(), "inventory", "current"),
+				Config:      testAccGraphVariantDataSourceConfig(server.URL(), "current"),
 				ExpectError: regexp.MustCompile(`(?s)Read graph variant: permission denied.*Graph read or broader org access.*variant metadata`),
 			},
 		},
@@ -181,7 +181,7 @@ func TestAccSubgraphDataSourceBasic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSubgraphDataSourceConfig(server.URL(), "inventory", "current", "products"),
+				Config: testAccSubgraphDataSourceConfig(server.URL(), "products"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.apollo_subgraph.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("data.apollo_subgraph.test", "variant", "current"),
@@ -205,7 +205,7 @@ func TestAccSubgraphDataSourceNotFound(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccSubgraphDataSourceConfig(server.URL(), "inventory", "current", "missing"),
+				Config:      testAccSubgraphDataSourceConfig(server.URL(), "missing"),
 				ExpectError: regexp.MustCompile(`Read subgraph: remote object not found`),
 			},
 		},
@@ -223,7 +223,7 @@ func TestAccSubgraphDataSourceUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccSubgraphDataSourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:      testAccSubgraphDataSourceConfig(server.URL(), "products"),
 				ExpectError: regexp.MustCompile(`Read subgraph: authentication failed`),
 			},
 		},
@@ -241,7 +241,7 @@ func TestAccSubgraphDataSourcePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccSubgraphDataSourceConfig(server.URL(), "inventory", "current", "products"),
+				Config:      testAccSubgraphDataSourceConfig(server.URL(), "products"),
 				ExpectError: regexp.MustCompile(`(?s)Read subgraph: permission denied.*Graph read or broader org access.*subgraph metadata`),
 			},
 		},
@@ -258,7 +258,7 @@ func TestAccPersistedQueryListDataSourceBasic(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccPersistedQueryListDataSourceConfig(server.URL(), "inventory", "pql-123"),
+				Config: testAccPersistedQueryListDataSourceConfig(server.URL(), "pql-123"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.apollo_persisted_query_list.test", "graph_id", "inventory"),
 					resource.TestCheckResourceAttr("data.apollo_persisted_query_list.test", "id", "pql-123"),
@@ -282,7 +282,7 @@ func TestAccPersistedQueryListDataSourceNotFound(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccPersistedQueryListDataSourceConfig(server.URL(), "inventory", "missing"),
+				Config:      testAccPersistedQueryListDataSourceConfig(server.URL(), "missing"),
 				ExpectError: regexp.MustCompile(`Read persisted query list: remote object not found`),
 			},
 		},
@@ -300,7 +300,7 @@ func TestAccPersistedQueryListDataSourceUnauthenticated(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccPersistedQueryListDataSourceConfig(server.URL(), "inventory", "pql-123"),
+				Config:      testAccPersistedQueryListDataSourceConfig(server.URL(), "pql-123"),
 				ExpectError: regexp.MustCompile(`Read persisted query list: authentication failed`),
 			},
 		},
@@ -318,7 +318,7 @@ func TestAccPersistedQueryListDataSourcePermissionDenied(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccPersistedQueryListDataSourceConfig(server.URL(), "inventory", "pql-123"),
+				Config:      testAccPersistedQueryListDataSourceConfig(server.URL(), "pql-123"),
 				ExpectError: regexp.MustCompile(`(?s)Read persisted query list: permission denied.*Graph or org access.*persisted query.*list management`),
 			},
 		},
@@ -338,7 +338,7 @@ data "apollo_graph" "test" {
 `, endpoint, graphID)
 }
 
-func testAccGraphVariantDataSourceConfig(endpoint string, graphID string, variant string) string {
+func testAccGraphVariantDataSourceConfig(endpoint string, variant string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -346,13 +346,13 @@ provider "apollo" {
 }
 
 data "apollo_graph_variant" "test" {
-  graph_id = %q
+  graph_id = "inventory"
   variant  = %q
 }
-`, endpoint, graphID, variant)
+`, endpoint, variant)
 }
 
-func testAccSubgraphDataSourceConfig(endpoint string, graphID string, variant string, name string) string {
+func testAccSubgraphDataSourceConfig(endpoint string, name string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -360,14 +360,14 @@ provider "apollo" {
 }
 
 data "apollo_subgraph" "test" {
-  graph_id = %q
-  variant  = %q
+  graph_id = "inventory"
+  variant  = "current"
   name     = %q
 }
-`, endpoint, graphID, variant, name)
+`, endpoint, name)
 }
 
-func testAccPersistedQueryListDataSourceConfig(endpoint string, graphID string, id string) string {
+func testAccPersistedQueryListDataSourceConfig(endpoint string, id string) string {
 	return fmt.Sprintf(`
 provider "apollo" {
   api_key  = "service:key"
@@ -375,10 +375,10 @@ provider "apollo" {
 }
 
 data "apollo_persisted_query_list" "test" {
-  graph_id = %q
+  graph_id = "inventory"
   id       = %q
 }
-`, endpoint, graphID, id)
+`, endpoint, id)
 }
 
 type metadataDataSourceTestServer struct {

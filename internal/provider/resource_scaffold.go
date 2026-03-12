@@ -50,19 +50,19 @@ func (r *scaffoldResource) Configure(_ context.Context, req resource.ConfigureRe
 }
 
 func (r *scaffoldResource) Create(_ context.Context, _ resource.CreateRequest, resp *resource.CreateResponse) {
-	addScaffoldNotImplementedError(&resp.Diagnostics, "resource", providerTypeName+"_"+r.typeName)
+	addScaffoldNotImplementedError(&resp.Diagnostics, providerTypeName+"_"+r.typeName)
 }
 
 func (r *scaffoldResource) Read(_ context.Context, _ resource.ReadRequest, resp *resource.ReadResponse) {
-	addScaffoldNotImplementedError(&resp.Diagnostics, "resource", providerTypeName+"_"+r.typeName)
+	addScaffoldNotImplementedError(&resp.Diagnostics, providerTypeName+"_"+r.typeName)
 }
 
 func (r *scaffoldResource) Update(_ context.Context, _ resource.UpdateRequest, resp *resource.UpdateResponse) {
-	addScaffoldNotImplementedError(&resp.Diagnostics, "resource", providerTypeName+"_"+r.typeName)
+	addScaffoldNotImplementedError(&resp.Diagnostics, providerTypeName+"_"+r.typeName)
 }
 
 func (r *scaffoldResource) Delete(_ context.Context, _ resource.DeleteRequest, resp *resource.DeleteResponse) {
-	addScaffoldNotImplementedError(&resp.Diagnostics, "resource", providerTypeName+"_"+r.typeName)
+	addScaffoldNotImplementedError(&resp.Diagnostics, providerTypeName+"_"+r.typeName)
 }
 
 func (r *scaffoldResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -141,7 +141,7 @@ func configureClient(providerData any, diags *diag.Diagnostics, component string
 	return client
 }
 
-func addScaffoldNotImplementedError(diags *diag.Diagnostics, subjectType string, subjectName string) {
+func addScaffoldNotImplementedError(diags *diag.Diagnostics, subjectName string) {
 	detail := "The provider surface for this object is registered from the GraphOS product specs, but the GraphOS Platform API client, CRUD wiring, import parsing, and normalization logic still need to be implemented."
 
 	resourceType := strings.TrimPrefix(subjectName, providerTypeName+"_")
@@ -158,7 +158,7 @@ func addScaffoldNotImplementedError(diags *diag.Diagnostics, subjectType string,
 	}
 
 	diags.AddError(
-		fmt.Sprintf("Scaffolded %s not implemented: %s", subjectType, subjectName),
+		fmt.Sprintf("Scaffolded resource not implemented: %s", subjectName),
 		detail,
 	)
 }

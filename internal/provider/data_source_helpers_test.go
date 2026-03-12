@@ -7,6 +7,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
@@ -35,13 +36,13 @@ func TestGraphVariantSubgraphListValue(t *testing.T) {
 	}
 
 	attributes := value.Attributes()
-	if got, want := attributes["name"].(basetypes.StringValue).ValueString(), "products"; got != want {
+	if got, want := requireStringAttributeValue(t, attributes, "name").ValueString(), "products"; got != want {
 		t.Fatalf("unexpected subgraph name: got %q want %q", got, want)
 	}
-	if got, want := attributes["routing_url"].(basetypes.StringValue).ValueString(), "https://products.example.com"; got != want {
+	if got, want := requireStringAttributeValue(t, attributes, "routing_url").ValueString(), "https://products.example.com"; got != want {
 		t.Fatalf("unexpected routing URL: got %q want %q", got, want)
 	}
-	if got, want := attributes["revision"].(basetypes.StringValue).ValueString(), "rev-products-1"; got != want {
+	if got, want := requireStringAttributeValue(t, attributes, "revision").ValueString(), "rev-products-1"; got != want {
 		t.Fatalf("unexpected revision: got %q want %q", got, want)
 	}
 }
@@ -67,12 +68,28 @@ func TestPersistedQueryListLinkedVariantListValue(t *testing.T) {
 	}
 
 	attributes := value.Attributes()
-	if got, want := attributes["graph_id"].(basetypes.StringValue).ValueString(), "inventory"; got != want {
+	if got, want := requireStringAttributeValue(t, attributes, "graph_id").ValueString(), "inventory"; got != want {
 		t.Fatalf("unexpected graph ID: got %q want %q", got, want)
 	}
-	if got, want := attributes["variant"].(basetypes.StringValue).ValueString(), "current"; got != want {
+	if got, want := requireStringAttributeValue(t, attributes, "variant").ValueString(), "current"; got != want {
 		t.Fatalf("unexpected variant: got %q want %q", got, want)
 	}
+}
+
+func requireStringAttributeValue(t *testing.T, attributes map[string]attr.Value, name string) basetypes.StringValue {
+	t.Helper()
+
+	value, ok := attributes[name]
+	if !ok {
+		t.Fatalf("expected attribute %q to be present", name)
+	}
+
+	stringValue, ok := value.(basetypes.StringValue)
+	if !ok {
+		t.Fatalf("expected attribute %q to be basetypes.StringValue, got %T", name, value)
+	}
+
+	return stringValue
 }
 
 func TestGraphDataSourceModelFromAPI(t *testing.T) {
