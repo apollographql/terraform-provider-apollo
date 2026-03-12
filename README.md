@@ -1,4 +1,4 @@
-# Terraform Provider Apollo
+# Apollo GraphOS Terraform Provider
 
 This repository is an Apollo GraphOS Terraform provider derived from the [HashiCorp Terraform Plugin Framework scaffolding template](https://github.com/hashicorp/terraform-provider-scaffolding-framework).
 
