@@ -1,0 +1,73 @@
+name: Live GraphOS Integration
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-smoke:
+    name: Read-only Smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APOLLO_PLATFORM_INTEGRATION: "1"
+      APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+      APOLLO_TEST_GRAPH_ID: ${{ secrets.APOLLO_TEST_GRAPH_ID }}
+      APOLLO_TEST_VARIANT: ${{ vars.APOLLO_TEST_VARIANT }}
+      APOLLO_TEST_SUBGRAPH: ${{ vars.APOLLO_TEST_SUBGRAPH }}
+      APOLLO_GRAPHOS_ENDPOINT: ${{ vars.APOLLO_GRAPHOS_ENDPOINT }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go mod download
+      - run: go test -v -run '^TestClientIntegrationReadOnly$' ./internal/provider/...
+
+  mutating-client-smoke:
+    name: Mutating Client Smoke
+    if: ${{ vars.APOLLO_INTEGRATION_ALLOW_MUTATIONS == '1' }}
+    needs: read-only-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APOLLO_PLATFORM_INTEGRATION: "1"
+      APOLLO_INTEGRATION_ALLOW_MUTATIONS: "1"
+      APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+      APOLLO_TEST_GRAPH_ID: ${{ secrets.APOLLO_TEST_GRAPH_ID }}
+      APOLLO_TEST_VARIANT: ${{ vars.APOLLO_TEST_VARIANT }}
+      APOLLO_GRAPHOS_ENDPOINT: ${{ vars.APOLLO_GRAPHOS_ENDPOINT }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go mod download
+      - run: go test -v -run '^TestClientIntegrationPersistedQueryListSmoke$' ./internal/provider/...
+
+  terraform-resource-smoke:
+    name: Terraform Resource Smoke
+    if: ${{ vars.APOLLO_INTEGRATION_ALLOW_MUTATIONS == '1' }}
+    needs: mutating-client-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      APOLLO_PLATFORM_INTEGRATION: "1"
+      APOLLO_INTEGRATION_ALLOW_MUTATIONS: "1"
+      APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+      APOLLO_TEST_GRAPH_ID: ${{ secrets.APOLLO_TEST_GRAPH_ID }}
+      APOLLO_TEST_VARIANT: ${{ vars.APOLLO_TEST_VARIANT }}
+      APOLLO_TEST_SUBGRAPH: ${{ vars.APOLLO_TEST_SUBGRAPH }}
+      APOLLO_GRAPHOS_ENDPOINT: ${{ vars.APOLLO_GRAPHOS_ENDPOINT }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go mod download
+      - run: go test -v -run '^TestTerraformIntegration' ./internal/provider/...

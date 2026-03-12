@@ -1,0 +1,1 @@
+{"data":{"graph":{"id":"inventory","variant":{"id":"variant-current","name":"current","subgraphs":[{"name":"products","url":"https://products.example.com/graphql","revision":"rev-products-1"},{"name":"reviews","url":"https://reviews.example.com/graphql","revision":"rev-reviews-2"}]}}}}
